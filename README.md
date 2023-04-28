@@ -32,6 +32,12 @@ This will be used for lab testing with Python and MongoDB.
 
 *Accounts*
 
+- ```/api/auth/register``` - POST - Registers a new account
+- ```/api/auth/login``` - POST - Generates a JWT token for the user
+- ```/api/auth/refresh``` - POST - Refreshes the JWT token for the user
+- ```/api/auth/update``` - PUT - Updates the user's account information
+- ```/api/auth/status``` - PUT - Activate / Deactivate the user's account
+
 *Central Processors*
 
 *Graphics Processors*
