@@ -59,7 +59,7 @@ def register_account(candidate: Account):
     # Create account in db try / except block
     try:
         db.accounts.insert_one(candidate.__dict__())
-        return jsonify({'message': 'Account created successfully'}), 201
+        return jsonify({'message': 'Account created successfully'}), 200
     except ConnectionError as e:
         print(e)
         return jsonify({'message': 'Error creating account'}), 500

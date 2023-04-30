@@ -5,6 +5,7 @@ from src.routes import auth
 import os
 
 app = Flask(__name__)
+app.testing = True
 load_dotenv()
 
 # JWT configuration with secret key
