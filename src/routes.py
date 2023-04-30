@@ -1,6 +1,7 @@
 from flask import request, Blueprint, jsonify
+from flask_jwt_extended import jwt_required
 from src.data.account import Account
-from src.services.auth_service import register_account, login_account
+from src.services.auth_service import register_account, login_account, update_account, change_activation_status, refresh_jwt_token
 
 
 """
@@ -25,18 +26,25 @@ def login():
 
 
 @auth.route("/refresh", methods=["POST"])
+@jwt_required(refresh=True)
 def refresh():
-    print("Not Implemented")
-    return jsonify({'message': 'Refresh'})
+    return refresh_jwt_token()
 
 
 @auth.route("/status", methods=["POST"])
+@jwt_required()
 def deactivate():
-    print("Not Implemented")
-    return jsonify({'message': 'Deactivate'})
+    email = request.json['email_address']
+    return change_activation_status(email)
 
 
 @auth.route("/update", methods=["POST"])
+@jwt_required()
 def update():
-    print("Not Implemented")
-    return jsonify({'message': 'Update'})
+    req = request.json
+
+    account = Account(
+        req['first_name'], req['last_name'],
+        req['email_address'], req['password'], True)
+
+    return update_account(account)
