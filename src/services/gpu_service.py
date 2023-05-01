@@ -1,18 +1,3 @@
-"""
-Service Layer for GPU Routes
-All routes defined in src\routes.py that are related to GPUs are handled here.
-Data model is in src\data\graphics_processor.py
-DataCon is singleton object that handles database connection
-
-Will need fuctions for:
-    - Get all GPUs
-    - Get GPU by ID
-    - Get GPU by brand, model, or architecture
-    - Add GPU data
-    - Add Batch GPU data
-    - Update GPU data
-    - Delete GPU data
-"""
 from bson.objectid import ObjectId
 from src.data.graphics_processor import GraphicsProcessor
 from src.datacon import DataCon
@@ -83,6 +68,34 @@ def get_gpu_by_id(gpu_id: str):
         return {"message": "Error getting GPU", "error": str(e)}, 500
 
 
+def get_gpu_by_query(brand: str, coprocessor: str, architecture: str):
+    if brand is None and coprocessor is None and architecture is None:
+        return {"message": "At least one query parameter is required"}, 400
+
+    datacon = DataCon().get_instance()
+    db = datacon.get_db()
+
+    try:
+        # Create query object
+        query = {}
+
+        if brand is not None:
+            query["brand"] = brand
+        if coprocessor is not None:
+            query["coprocessor"] = coprocessor
+        if architecture is not None:
+            query["architecture"] = architecture
+        print(query)
+        gpus = list(db["gpus"].find(query))
+
+        for gpu in gpus:
+            gpu["_id"] = str(gpu["_id"])
+
+        return {"GPUs found": len(gpus), "data": gpus}, 200
+    except Exception as e:
+        return {"message": "Error getting GPUs", "error": str(e)}, 500
+
+
 def delete_gpu_data(gpu_id: str):
     datacon = DataCon().get_instance()
     db = datacon.get_db()
@@ -92,3 +105,24 @@ def delete_gpu_data(gpu_id: str):
         return {"message": "GPU deleted successfully"}, 200
     except Exception as e:
         return {"message": "Error deleting GPU", "error": str(e)}, 500
+
+
+def update_gpu_data(gpu_id: str, gpu: GraphicsProcessor):
+    datacon = DataCon().get_instance()
+    db = datacon.get_db()
+
+    if gpu.brand is None or gpu.brand == "":
+        return {"message": "Brand is required"}, 400
+    elif gpu.architecture is None or gpu.architecture == "":
+        return {"message": "Architecture is required"}, 400
+    elif gpu.coprocessor is None or gpu.coprocessor == "":
+        return {"message": "Coprocessor is required"}, 400
+
+    gpu_dict = gpu.__dict__()
+    gpu_dict.pop("_id")
+
+    try:
+        db["gpus"].update_one({"_id": ObjectId(gpu_id)}, {"$set": gpu_dict})
+        return {"message": "GPU updated successfully"}, 200
+    except Exception as e:
+        return {"message": "Error updating GPU", "error": str(e)}, 500

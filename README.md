@@ -42,8 +42,10 @@ This will be used for lab testing with Python and MongoDB.
 
 *Graphics Processors*
 
-- ```/api/gpu/all``` - GET - Returns all GPU records
-- ```/api/gpu/{id}``` - GET - Returns a specific GPU record
 - ```/api/gpu/add``` - POST - Creates a new GPU record
 - ```/api/gpu/add/batch``` - POST - Creates multiple GPU records
+- ```/api/gpu/update/{id}``` - PUT - Updates a specific GPU record
 - ```/api/gpu/delete/{id}``` - DELETE - Deletes a specific GPU record
+- ```/api/gpu/all``` - GET - Returns all GPU records
+- ```/api/gpu/{id}``` - GET - Returns a specific GPU record
+- ```/api/gpu/filtered/params$brand={brand}$coprocessor={coprocessor}$architecture={architecture}``` - GET - Returns GPU records based on query parameters (use na if no filter)

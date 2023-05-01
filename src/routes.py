@@ -3,7 +3,7 @@ from flask_jwt_extended import jwt_required
 from src.data.account import Account
 from src.data.graphics_processor import GraphicsProcessor
 from src.services.auth_service import register_account, login_account, update_account, change_activation_status, refresh_jwt_token
-from src.services.gpu_service import add_gpu_data, add_multiple_gpus, get_all_gpu_data, get_gpu_by_id, delete_gpu_data
+from src.services.gpu_service import add_gpu_data, add_multiple_gpus, get_all_gpu_data, get_gpu_by_id, get_gpu_by_query, update_gpu_data, delete_gpu_data
 
 
 """
@@ -57,6 +57,7 @@ GPU Routes
 """
 
 gpu = Blueprint("gpu", __name__)
+gpu_url_filter = "/filtered/params$brand=<brand>$coprocessor=<coprocessor>$architecture=<architecture>"
 
 
 @gpu.route("/all", methods=["GET"])
@@ -65,10 +66,17 @@ def get_all_gpus():
     return get_all_gpu_data()
 
 
-@gpu.route("/filtered", methods=["GET"])
+@gpu.route(gpu_url_filter, methods=["GET"])
 @jwt_required()
-def get_filtered_gpus():
-    return jsonify({"message": "filtered gpus"})
+def get_filtered_gpus(coprocessor: str, architecture: str, brand: str):
+    if coprocessor == "na":
+        coprocessor = None
+    if architecture == "na":
+        architecture = None
+    if brand == "na":
+        brand = None
+    print(brand)
+    return get_gpu_by_query(brand, coprocessor, architecture)
 
 
 @gpu.route("/<gpu_id>", methods=["GET"])
@@ -103,10 +111,16 @@ def add_batch_gpu():
     return add_multiple_gpus(candidate_gpus)
 
 
-@gpu.route("/update", methods=["PUT"])
+@gpu.route("/update/<gpu_id>", methods=["PUT"])
 @jwt_required()
-def update_gpu():
-    return jsonify({"message": "update gpu"})
+def update_gpu(gpu_id: str):
+    candidate_gpu = GraphicsProcessor(
+        request.json['brand'], request.json['coprocessor'],
+        request.json['architecture'], request.json['vram_size'],
+        request.json['vram_type'], request.json['clock_speed'],
+        request.json['fan_count'], request.json['video_outputs'])
+
+    return update_gpu_data(gpu_id, candidate_gpu)
 
 
 @gpu.route("/delete/<gpu_id>", methods=["DELETE"])
