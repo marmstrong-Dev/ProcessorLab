@@ -41,3 +41,9 @@ This will be used for lab testing with Python and MongoDB.
 *Central Processors*
 
 *Graphics Processors*
+
+- ```/api/gpu/all``` - GET - Returns all GPU records
+- ```/api/gpu/{id}``` - GET - Returns a specific GPU record
+- ```/api/gpu/add``` - POST - Creates a new GPU record
+- ```/api/gpu/add/batch``` - POST - Creates multiple GPU records
+- ```/api/gpu/delete/{id}``` - DELETE - Deletes a specific GPU record

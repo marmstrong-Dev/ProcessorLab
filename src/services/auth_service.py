@@ -1,17 +1,3 @@
-"""
-Service layer will contain logic for authentication and authorization of users.
-Routes will be declared in routes.py and will call functions from this file.
-
-Will use JWT for authentication and authorization.
-Will use bcrypt for hashing and salting passwords.
-
-Functions:
-    register_account
-    login_account
-    change_activation_status
-    update_account
-    refresh_token
-"""
 from flask import jsonify
 from bson.objectid import ObjectId
 from src.data.account import Account
