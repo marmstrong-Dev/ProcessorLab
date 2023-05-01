@@ -1,6 +1,6 @@
 from bson.objectid import ObjectId
 from src.data.graphics_processor import GraphicsProcessor
-from src.datacon import DataCon
+from src import db
 
 
 def add_gpu_data(gpu: GraphicsProcessor):
@@ -11,20 +11,14 @@ def add_gpu_data(gpu: GraphicsProcessor):
     elif gpu.coprocessor is None or gpu.coprocessor == "":
         return {"message": "Coprocessor is required"}, 400
 
-    datacon = DataCon().get_instance()
-    db = datacon.get_db()
-
     try:
         db["gpus"].insert_one(gpu.__dict__())
-        return {"message": "GPU added successfully"}, 200
+        return {"message": "GPU added successfully", "data": gpu.__json__()}, 200
     except Exception as e:
         return {"message": "Error adding GPU", "error": str(e)}, 500
 
 
 def add_multiple_gpus(gpus: list):
-    datacon = DataCon().get_instance()
-    db = datacon.get_db()
-
     for gpu in gpus:
         if gpu.brand is None or gpu.brand == "":
             return {"message": "Brand is required"}, 400
@@ -41,9 +35,6 @@ def add_multiple_gpus(gpus: list):
 
 
 def get_all_gpu_data():
-    datacon = DataCon().get_instance()
-    db = datacon.get_db()
-
     try:
         gpus = list(db["gpus"].find())
 
@@ -56,9 +47,6 @@ def get_all_gpu_data():
 
 
 def get_gpu_by_id(gpu_id: str):
-    datacon = DataCon().get_instance()
-    db = datacon.get_db()
-
     try:
         gpu = db["gpus"].find_one({"_id": ObjectId(gpu_id)})
         gpu["_id"] = str(gpu["_id"])
@@ -71,10 +59,6 @@ def get_gpu_by_id(gpu_id: str):
 def get_gpu_by_query(brand: str, coprocessor: str, architecture: str):
     if brand is None and coprocessor is None and architecture is None:
         return {"message": "At least one query parameter is required"}, 400
-
-    datacon = DataCon().get_instance()
-    db = datacon.get_db()
-
     try:
         # Create query object
         query = {}
@@ -85,7 +69,7 @@ def get_gpu_by_query(brand: str, coprocessor: str, architecture: str):
             query["coprocessor"] = coprocessor
         if architecture is not None:
             query["architecture"] = architecture
-        print(query)
+
         gpus = list(db["gpus"].find(query))
 
         for gpu in gpus:
@@ -97,9 +81,6 @@ def get_gpu_by_query(brand: str, coprocessor: str, architecture: str):
 
 
 def delete_gpu_data(gpu_id: str):
-    datacon = DataCon().get_instance()
-    db = datacon.get_db()
-
     try:
         db["gpus"].delete_one({"_id": ObjectId(gpu_id)})
         return {"message": "GPU deleted successfully"}, 200
@@ -108,9 +89,6 @@ def delete_gpu_data(gpu_id: str):
 
 
 def update_gpu_data(gpu_id: str, gpu: GraphicsProcessor):
-    datacon = DataCon().get_instance()
-    db = datacon.get_db()
-
     if gpu.brand is None or gpu.brand == "":
         return {"message": "Brand is required"}, 400
     elif gpu.architecture is None or gpu.architecture == "":

@@ -28,3 +28,16 @@ class GraphicsProcessor:
             "fan_count": self.fan_count,
             "video_outputs": self.video_outputs
         }
+
+    def __json__(self):
+        return {
+            "_id": str(self._id),
+            "brand": self.brand,
+            "coprocessor": self.coprocessor,
+            "architecture": self.architecture,
+            "vram_size": self.vram_size,
+            "vram_type": self.vram_type,
+            "clock_speed": self.clock_speed,
+            "fan_count": self.fan_count,
+            "video_outputs": self.video_outputs
+        }

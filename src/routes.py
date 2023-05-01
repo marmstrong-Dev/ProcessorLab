@@ -1,6 +1,7 @@
 from flask import request, Blueprint, jsonify
 from flask_jwt_extended import jwt_required
 from src.data.account import Account
+from src.data.central_processor import CentralProcessor
 from src.data.graphics_processor import GraphicsProcessor
 from src.services.auth_service import register_account, login_account, update_account, change_activation_status, refresh_jwt_token
 from src.services.gpu_service import add_gpu_data, add_multiple_gpus, get_all_gpu_data, get_gpu_by_id, get_gpu_by_query, update_gpu_data, delete_gpu_data
@@ -53,6 +54,13 @@ def update():
 
 
 """
+CPU Routes
+"""
+
+
+cpu = Blueprint("cpu", __name__)
+
+"""
 GPU Routes
 """
 
@@ -75,7 +83,7 @@ def get_filtered_gpus(coprocessor: str, architecture: str, brand: str):
         architecture = None
     if brand == "na":
         brand = None
-    print(brand)
+    
     return get_gpu_by_query(brand, coprocessor, architecture)
 
 

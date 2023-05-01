@@ -1,10 +1,10 @@
 from flask import jsonify
 from bson.objectid import ObjectId
-from src.data.account import Account
-from src.datacon import DataCon
 from bcrypt import hashpw, gensalt
 from datetime import timedelta
 from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity, get_jwt
+from src.data.account import Account
+from src import db
 
 
 def register_account(candidate: Account):
@@ -33,9 +33,6 @@ def register_account(candidate: Account):
         return jsonify({'message': 'Password must contain at least one capital letter'}), 400
 
     # Check if email address is already in use
-    mdb = DataCon.get_instance()
-    db = mdb.get_db()
-
     if db.accounts.find_one({"email_address": candidate.email_address}):
         return jsonify({'message': 'Email address already in use'}), 400
 
@@ -58,8 +55,8 @@ def login_account(email_address: str, password: str):
         return jsonify({'message': 'Password is required'}), 400
 
     # Check if email address is in db
-    mdb = DataCon.get_instance()
-    db = mdb.get_db()
+    # mdb = DataCon.get_instance()
+    # db = mdb.get_db()
 
     # Check if password matches
     if db.accounts.find_one({"email_address": email_address}):
@@ -84,8 +81,8 @@ def login_account(email_address: str, password: str):
 def refresh_jwt_token():
     jwt_identity = get_jwt_identity()
 
-    mdb = DataCon.get_instance()
-    db = mdb.get_db()
+    # mdb = DataCon.get_instance()
+    # db = mdb.get_db()
 
     if db.accounts.find_one({"_id": ObjectId(jwt_identity)}):
         account = db.accounts.find_one({"_id": ObjectId(jwt_identity)})
@@ -105,8 +102,8 @@ def change_activation_status(email_address: str):
         return jsonify({'message': 'Email address is required'}), 400
 
     # Check if email address is in db
-    mdb = DataCon.get_instance()
-    db = mdb.get_db()
+    # mdb = DataCon.get_instance()
+    # db = mdb.get_db()
 
     if db.accounts.find_one({"email_address": email_address}):
         account = db.accounts.find_one({"email_address": email_address})
@@ -127,8 +124,8 @@ def change_activation_status(email_address: str):
 
 
 def update_account(account: Account):
-    mdb = DataCon.get_instance()
-    db = mdb.get_db()
+    # mdb = DataCon.get_instance()
+    # db = mdb.get_db()
 
     # Get _id from jwt token
     _id = ObjectId(get_jwt_identity())
