@@ -1,7 +1,7 @@
 from flask import Flask, jsonify
 from dotenv import load_dotenv
 from flask_jwt_extended import JWTManager
-from src.routes import auth, gpu
+from src.routes import auth, cpu, gpu
 import os
 
 app = Flask(__name__)
@@ -16,6 +16,7 @@ jwt = JWTManager(app)
 # Blueprints declaration
 app.register_blueprint(auth, url_prefix="/api/auth")
 app.register_blueprint(gpu, url_prefix="/api/gpu")
+app.register_blueprint(cpu, url_prefix="/api/cpu")
 
 
 @app.route("/api/status")

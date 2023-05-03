@@ -6,22 +6,6 @@ from src.data.account import Account
 from src import db
 from app import app
 
-"""
-Testing GPU Services
-Will need to test all GPU routes from routes.py
-DB is set up in __init__.py
-All routes are JWT secured (will need a test user)
-
-Test Cases:
-    - Add GPU
-    - Add Multiple GPUs
-    - Get All GPUs
-    - Get GPU by ID
-    - Get GPU by Query
-    - Update GPU
-    - Delete GPU
-"""
-
 
 class TestGpu(unittest.TestCase):
     def setUp(self):
@@ -70,7 +54,7 @@ class TestGpu(unittest.TestCase):
 
     def test_add_multiple_gpus(self):
         response = self.app.post(
-            "/api/gpu/batch", data=json.dumps([gpu.__dict__() for gpu in self.test_gpus]),
+            "/api/gpu/add/batch", data=json.dumps([gpu.__json__() for gpu in self.test_gpus]),
             headers={"Authorization": f"Bearer {self.access_token}"},
             content_type="application/json")
 

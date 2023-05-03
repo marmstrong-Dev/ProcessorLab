@@ -4,6 +4,7 @@ from src.data.account import Account
 from src.data.central_processor import CentralProcessor
 from src.data.graphics_processor import GraphicsProcessor
 from src.services.auth_service import register_account, login_account, update_account, change_activation_status, refresh_jwt_token
+from src.services.cpu_service import add_cpu_data, add_multiple_cpus, get_all_cpu_data, get_cpu_by_id, get_cpu_by_query, update_cpu_data, delete_cpu_data
 from src.services.gpu_service import add_gpu_data, add_multiple_gpus, get_all_gpu_data, get_gpu_by_id, get_gpu_by_query, update_gpu_data, delete_gpu_data
 
 
@@ -59,6 +60,79 @@ CPU Routes
 
 
 cpu = Blueprint("cpu", __name__)
+cpu_url_filter = "/filtered/params$brand=<brand>$model=<model>$socket=<socket>"
+
+
+@cpu.route("/all", methods=["GET"])
+@jwt_required()
+def get_all_cpus():
+    return get_all_cpu_data()
+
+
+@cpu.route(cpu_url_filter, methods=["GET"])
+@jwt_required()
+def get_filtered_cpus(brand: str, model: str, socket: str):
+    if brand == "na":
+        brand = None
+    if model == "na":
+        model = None
+    if socket == "na":
+        socket = None
+
+    return get_cpu_by_query(brand, model, socket)
+
+
+@cpu.route("/<cpu_id>", methods=["GET"])
+@jwt_required()
+def get_cpu(cpu_id: str):
+    return get_cpu_by_id(cpu_id)
+
+
+@cpu.route("/add", methods=["POST"])
+@jwt_required()
+def add_cpu():
+    candidate_cpu = CentralProcessor(
+        request.json['brand'], request.json['model'],
+        request.json['socket'], request.json['core_count'],
+        request.json['thread_count'], request.json['base_clock'],
+        request.json['unlocked']
+    )
+
+    return add_cpu_data(candidate_cpu)
+
+
+@cpu.route("/add/batch", methods=["POST"])
+@jwt_required()
+def add_batch_cpus():
+    candidate_cpus = []
+
+    for c_cpu in request.json:
+        candidate_cpus.append(CentralProcessor(
+            c_cpu['brand'], c_cpu['model'], c_cpu['socket'],
+            c_cpu['core_count'], c_cpu['thread_count'],
+            c_cpu['base_clock'], c_cpu['unlocked']))
+
+    return add_multiple_cpus(candidate_cpus)
+
+
+@cpu.route("/update/<cpu_id>", methods=["PUT"])
+@jwt_required()
+def update_cpu(cpu_id: str):
+    candidate_cpu = CentralProcessor(
+        request.json['brand'], request.json['model'],
+        request.json['socket'], request.json['core_count'],
+        request.json['thread_count'], request.json['base_clock'],
+        request.json['unlocked']
+    )
+
+    return update_cpu_data(cpu_id, candidate_cpu)
+
+
+@cpu.route("/delete/<cpu_id>", methods=["DELETE"])
+@jwt_required()
+def delete_cpu(cpu_id: str):
+    return delete_cpu_data(cpu_id)
+
 
 """
 GPU Routes

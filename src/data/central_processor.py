@@ -26,3 +26,15 @@ class CentralProcessor:
             "base_clock": self.base_clock,
             "unlocked": self.unlocked
         }
+
+    def __json__(self):
+        return {
+            "_id": str(self._id),
+            "brand": self.brand,
+            "model": self.model,
+            "socket": self.socket,
+            "core_count": self.core_count,
+            "thread_count": self.thread_count,
+            "base_clock": self.base_clock,
+            "unlocked": self.unlocked
+        }
