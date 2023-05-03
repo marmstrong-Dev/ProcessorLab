@@ -40,6 +40,14 @@ This will be used for lab testing with Python and MongoDB.
 
 *Central Processors*
 
+- ```/api/cpu/add``` - POST - Creates a new CPU record
+- ```/api/cpu/add/batch``` - POST - Creates multiple CPU records
+- ```/api/cpu/update/{id}``` - PUT - Updates a specific CPU record
+- ```/api/cpu/delete/{id}``` - DELETE - Deletes a specific CPU record
+- ```/api/cpu/all``` - GET - Returns all CPU records
+- ```/api/cpu/{id}``` - GET - Returns a specific CPU record
+- ```/api/cpu/filtered/params$brand={brand}$coprocessor={coprocessor}$architecture={architecture}``` - GET - Returns CPU records based on query parameters (use na if no filter)
+
 *Graphics Processors*
 
 - ```/api/gpu/add``` - POST - Creates a new GPU record
