@@ -93,7 +93,7 @@ def update_cpu_data(cpu_id: str, cpu: CentralProcessor):
 
     try:
         db["cpus"].update_one({"_id": ObjectId(cpu_id)}, {"$set": cpu_dict})
-        return {"message": "CPU updated successfully"}, 200
+        return {"message": "CPU updated successfully", "data": cpu_dict}, 200
     except Exception as e:
         return {"message": "Error updating CPU", "error": str(e)}, 500
 

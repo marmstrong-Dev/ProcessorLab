@@ -78,13 +78,39 @@ class TestGpu(unittest.TestCase):
         self.assertEqual(response.json['data']['_id'], url_id)
 
     def test_get_gpu_by_query(self):
-        pass
+        # Get All GPUs from DB
+        response = self.app.get(
+            "/api/gpu/filtered/params$brand=Test%20-%20MSI$coprocessor=NVIDIA$architecture=na",
+            headers={"Authorization": f"Bearer {self.access_token}"})
+
+        self.assertEqual(response.status_code, 200)
 
     def test_update_gpu(self):
-        pass
+        self.test_add_gpu()
+        url_id = self.test_gpu_id
+
+        mod_gpu_data = {
+            "brand": "Test - MSI", "coprocessor": "NVIDIA", "architecture": "GeForce RTX 4080",
+            "vram_size": 16, "vram_type": "GDDR6X", "clock_speed": 2.6, "fan_count": 3, "video_outputs": [
+                {"HDMI": 2}, {"DisplayPort": 3}]
+        }
+
+        response = self.app.put(
+            f"/api/gpu/update/{url_id}", data=json.dumps(mod_gpu_data),
+            headers={"Authorization": f"Bearer {self.access_token}"},
+            content_type="application/json")
+
+        self.assertEqual(response.status_code, 200)
 
     def test_delete_gpu(self):
-        pass
+        self.test_add_gpu()
+        url_id = self.test_gpu_id
+
+        response = self.app.delete(
+            f"/api/gpu/delete/{url_id}",
+            headers={"Authorization": f"Bearer {self.access_token}"})
+
+        self.assertEqual(response.status_code, 200)
 
     def tearDown(self):
         # Delete test GPUs marked by Test -
